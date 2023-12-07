@@ -1,10 +1,11 @@
-#!/usr/bin/ env python3
+#!/usr/bin/env python3
 """Duck Tying Annotation"""
-from typing import Sequence, Any, Union, NoneType
+from typing import Sequence, Any, Union
+import types
 
 
 # The types of the elements of the input are not know
-def safe_first_element(lst: Sequence[Any]) -> Union[Any, NoneType]:
+def safe_first_element(lst: Sequence[Any]) -> Union[Any, types.NoneType]:
     """safe_first_element:
 takes lst: Sequence[Any] as argument and return a union type"""
     if lst:
