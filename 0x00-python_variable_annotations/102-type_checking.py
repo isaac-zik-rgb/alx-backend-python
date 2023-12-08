@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Type Checking"""
-from typing import List, Union, Tuple, Any
+from typing import List, Union, Tuple
 
 
-def zoom_array(lst: Tuple[Any, ...], factor: int = 2) -> List:
+def zoom_array(lst: Tuple, factor: int = 2) -> List:
     """zoom_array: takes a tuple and return a list"""
     zoomed_in: List[Union[int, float]] = [
         item for item in lst
