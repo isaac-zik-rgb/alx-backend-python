@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 """Type Checking"""
-from typing import Tuple, List, Union
+from typing import List, Union, Tuple
 
-
-def zoom_array(lst: Tuple,factor: int = 2) -> List:
-    """zoom_array: takes a tuple and return a tuple"""
+def zoom_array(lst: Tuple[Union[int, float], ...], factor: int = 2) -> List[Union[int, float]]:
+    """zoom_array: takes a tuple and return a list"""
     zoomed_in: List[Union[int, float]] = [
         item for item in lst
         for i in range(factor)
     ]
-    return tuple(zoomed_in)
+    return zoomed_in
 
+array = (12, 72, 91)
 
-array = (12, 72, 91)  # Use a tuple instead of a list
+zoom_2x = zoom_array(array)  # Returns a List[Union[int, float]]
 
-zoom_2x = zoom_array(array)  # No issues here
-
-zoom_3x = zoom_array(array, 3)
+zoom_3x = zoom_array(array, 3) 
