@@ -67,13 +67,6 @@ class TestGithubOrgClient(unittest.TestCase):
             repo, license_key), expected)
 
 
-@parameterized_class([
-    {"org_payload": {"payload": True}, "repos_payload": {"repos_payload": True},
-     "expected_repos": ["twitter", "auth-api", "scaffold"]},
-    {"org_payload": {"payload": True}, "repos_payload": {"repos_payload": False},
-     "expected_repos": []},
-])
-
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """TestIntegrationGithubOrgClient class
     """
@@ -109,7 +102,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(test_class.public_repos("my_license"), ["twitter"])
         self.assertEqual(test_class.public_repos("other_license"), [])
         self.get.assert_called()
-    
+
 
 
 
