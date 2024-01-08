@@ -73,37 +73,43 @@ class TestGithubOrgClient(unittest.TestCase):
     {"org_payload": {"payload": True}, "repos_payload": {"repos_payload": False},
      "expected_repos": []},
 ])
-class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration test for GithubOrgClient.public_repos"""
 
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """TestIntegrationGithubOrgClient class
+    """
     @classmethod
     def setUpClass(cls):
-        """setUpClass"""
-        org = "twitter"
+        """setUpClass method
+        """
         cls.get_patcher = patch('requests.get')
-        cls.mock_requests = cls.get_patcher.start()
-        cls.mock_requests.side_effect = [
-            cls.org_payload, cls.repos_payload
-        ]
+        cls.get = cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
-        """tearDownClass"""
+        """tearDownClass method
+        """
         cls.get_patcher.stop()
 
     def test_public_repos(self):
         """test_public_repos"""
+        self.get.side_effect = [
+            self.org_payload, self.repos_payload
+        ]
         test_class = GithubOrgClient("twitter")
         self.assertEqual(test_class.public_repos(), self.expected_repos)
-        self.assertEqual(test_class.public_repos("test"), [])
-        self.mock_requests.assert_called()
+        self.assertEqual(test_class.public_repos("SOME_LICENCE"), [])
+        self.get.assert_called()
 
     def test_public_repos_with_license(self):
         """test_public_repos_with_license"""
+        self.get.side_effect = [
+            self.org_payload, self.repos_payload
+        ]
         test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.public_repos("apache-2.0"), [])
-        self.assertEqual(test_class.public_repos("bsd"), self.expected_repos[0:1])
-        self.mock_requests.assert_called()
+        self.assertEqual(test_class.public_repos("my_license"), ["twitter"])
+        self.assertEqual(test_class.public_repos("other_license"), [])
+        self.get.assert_called()
+    
 
 
 
