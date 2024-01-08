@@ -103,6 +103,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         test_class = GithubOrgClient("twitter")
         self.assertEqual(test_class.public_repos("apache-2.0"), [])
         self.assertEqual(test_class.public_repos("bsd"), self.expected_repos[0:1])
+        self.mock_requests.assert_called()
+
 
 
 
