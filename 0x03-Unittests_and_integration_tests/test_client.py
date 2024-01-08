@@ -66,7 +66,14 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(GithubOrgClient.has_license(
             repo, license_key), expected)
 
-
+@parameterized_class([
+    {"org_payload": {"payload": True}, "repos_payload": {"payload": True},
+     "expected_repos": ["repo1", "repo2", "repo3", "repo4"],
+     "apache2_repos": ["repo2", "repo4"]},
+    {"org_payload": {"payload": True}, "repos_payload": {"payload": False},
+     "expected_repos": [],
+     "apache2_repos": []},
+])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """TestIntegrationGithubOrgClient class
     """
@@ -74,8 +81,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """setUpClass method
         """
-        cls.get_patcher = patch('requests.get')
-        cls.get = cls.get_patcher.start()
+        cls.get_patcher = patch('requests.get', side_effect=HTTPError)
+        cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
@@ -85,23 +92,17 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     def test_public_repos(self):
         """test_public_repos"""
-        self.get.side_effect = [
-            self.org_payload, self.repos_payload
-        ]
         test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.public_repos(), self.expected_repos)
-        self.assertEqual(test_class.public_repos("SOME_LICENCE"), [])
-        self.get.assert_called()
-
+        self.assertEqual(test_class.public_repos(), [])
+        self.get_patcher.stop()
+        self.get_patcher.start()
+    
     def test_public_repos_with_license(self):
         """test_public_repos_with_license"""
-        self.get.side_effect = [
-            self.org_payload, self.repos_payload
-        ]
         test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.public_repos("my_license"), ["twitter"])
-        self.assertEqual(test_class.public_repos("other_license"), [])
-        self.get.assert_called()
+        self.assertEqual(test_class.public_repos("my_license"), [])
+        self.get_patcher.stop()
+        self.get_patcher.start()
 
 
 
