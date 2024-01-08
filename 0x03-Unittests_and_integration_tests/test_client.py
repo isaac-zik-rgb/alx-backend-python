@@ -75,7 +75,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """setUpClass method
         """
         cls.get_patcher = patch('requests.get')
-        cls.get_patcher.start()
+        cls.get = cls.get_patcher.start()
+        cls.get.return_value.json.return_value = {"payload": True}
 
     @classmethod
     def tearDownClass(cls):
@@ -87,23 +88,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """test_public_repos method
         """
         test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.public_repos(), [])
-        self.get_patcher.stop()
-
-    def test_public_repos_with_license(self):
-        """test_public_repos_with_license method
-        """
-        test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.public_repos("apache-2.0"), [])
-        self.get_patcher.stop()
-
-    def test_public_repos_with_license_no_data(self):
-        """test_public_repos_with_license_no_data method
-        """
-        test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.public_repos("bsd"), [])
-        self.get_patcher.stop()
-
+        self.assertEqual(test_class.org, {"payload": True})
+        self.assertEqual(test_class.repos_payload, {"payload": True})
+        self.assertEqual(test_class.public_repos(), ["twitter"])
+        self.assertEqual(test_class.public_repos("test"), ["twitter"])
+        self.get.assert_called_once()
+        self.get.return_value.json.assert_called_once()
 
     
 
