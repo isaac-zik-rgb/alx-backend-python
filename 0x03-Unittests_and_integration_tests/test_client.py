@@ -65,8 +65,8 @@ class TestGithubOrgClient(unittest.TestCase):
         """test_has_license"""
         self.assertEqual(GithubOrgClient.has_license(
             repo, license_key), expected)
-        
-    
+
+
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """TestIntegrationGithubOrgClient class
     """
@@ -94,7 +94,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(test_class.public_repos("test"), ["twitter"])
         self.get.assert_called_once()
         self.get.return_value.json.assert_called_once()
-    
+
     def test_public_repos_with_license(self):
         """test_public_repos_with_license method
         """
@@ -105,8 +105,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.get.assert_called_once()
         self.get.return_value.json.assert_called_once()
 
-
-    
 
 if __name__ == '__main__':
     unittest.main()
