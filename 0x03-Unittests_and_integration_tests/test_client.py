@@ -67,43 +67,45 @@ class TestGithubOrgClient(unittest.TestCase):
             repo, license_key), expected)
 
 
+@parameterized_class([
+    {"org_payload": {"payload": True}, "repos_payload": {"repos_payload": True},
+     "expected_repos": ["twitter", "auth-api", "scaffold"]},
+    {"org_payload": {"payload": True}, "repos_payload": {"repos_payload": False},
+     "expected_repos": []},
+])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """TestIntegrationGithubOrgClient class
-    """
+    """Integration test for GithubOrgClient.public_repos"""
+
     @classmethod
     def setUpClass(cls):
-        """setUpClass method
-        """
+        """setUpClass"""
+        org = "twitter"
         cls.get_patcher = patch('requests.get')
-        cls.get = cls.get_patcher.start()
-        cls.get.return_value.json.return_value = {"payload": True}
+        cls.mock_requests = cls.get_patcher.start()
+        cls.mock_requests.side_effect = [
+            cls.org_payload, cls.repos_payload
+        ]
 
     @classmethod
     def tearDownClass(cls):
-        """tearDownClass method
-        """
+        """tearDownClass"""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
-        """test_public_repos method
-        """
+        """test_public_repos"""
         test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.org, {"payload": True})
-        self.assertEqual(test_class.repos_payload, {"payload": True})
-        self.assertEqual(test_class.public_repos(), ["twitter"])
-        self.assertEqual(test_class.public_repos("test"), ["twitter"])
-        self.get.assert_called_once()
-        self.get.return_value.json.assert_called_once()
+        self.assertEqual(test_class.public_repos(), self.expected_repos)
+        self.assertEqual(test_class.public_repos("test"), [])
+        self.mock_requests.assert_called()
 
     def test_public_repos_with_license(self):
-        """test_public_repos_with_license method
-        """
+        """test_public_repos_with_license"""
         test_class = GithubOrgClient("twitter")
-        self.assertEqual(test_class.org, {"payload": True})
-        self.assertEqual(test_class.repos_payload, {"payload": True})
-        self.assertEqual(test_class.public_repos("test"), ["twitter"])
-        self.get.assert_called_once()
-        self.get.return_value.json.assert_called_once()
+        self.assertEqual(test_class.public_repos("my_license"), ["twitter"])
+        self.assertEqual(test_class.public_repos("other_license"), [])
+        self.assertEqual(test_class.public_repos(42), [])
+        self.mock_requests.assert_called()
+
 
 
 if __name__ == '__main__':
