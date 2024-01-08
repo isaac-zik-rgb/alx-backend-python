@@ -31,7 +31,30 @@ class TestGithubOrgClient(unittest.TestCase):
         test_class.org()
         mock_get_json.assert_called_once_with(
             f'https://api.github.com/orgs/{org_name}')
+        
+    def test_public_repos_url(self):
+        """test_public_repos_url"""
+        with patch('client.GithubOrgClient.org',
+                   new_callable=PropertyMock) as mock_org:
+            mock_org.return_value = {"repos_url": "twitter"}
+            test_class = GithubOrgClient("twitter")
+            self.assertEqual(test_class._public_repos_url, "twitter")
+            mock_org.assert_called_once()
 
 
+    
+    @patch('client.get_json')
+    def test_public_repos(self, mock_get_json):
+        """test_public_repos"""
+        mock_get_json.return_value = [{"name": "twitter"}]
+        with patch('client.GithubOrgClient._public_repos_url',
+                   new_callable=PropertyMock) as mock_public_repos_url:
+            mock_public_repos_url.return_value = "twitter"
+            test_class = GithubOrgClient("twitter")
+            self.assertEqual(test_class.public_repos(), ["twitter"])
+            mock_public_repos_url.assert_called_once()
+            mock_get_json.assert_called_once()
+
+    
 if __name__ == '__main__':
     unittest.main()
