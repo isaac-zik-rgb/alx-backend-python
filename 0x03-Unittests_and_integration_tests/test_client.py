@@ -81,7 +81,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """setUpClass method
         """
-        cls.get_patcher = patch('requests.get', side_effect=HTTPError)
+        cls.get_patcher = patch('requests.get')
         cls.get_patcher.start()
 
     @classmethod
@@ -103,9 +103,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(test_class.public_repos("my_license"), [])
         self.get_patcher.stop()
         self.get_patcher.start()
-
-
-
 
 
 if __name__ == '__main__':
