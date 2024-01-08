@@ -94,6 +94,17 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(test_class.public_repos("test"), ["twitter"])
         self.get.assert_called_once()
         self.get.return_value.json.assert_called_once()
+    
+    def test_public_repos_with_license(self):
+        """test_public_repos_with_license method
+        """
+        test_class = GithubOrgClient("twitter")
+        self.assertEqual(test_class.org, {"payload": True})
+        self.assertEqual(test_class.repos_payload, {"payload": True})
+        self.assertEqual(test_class.public_repos("test"), ["twitter"])
+        self.get.assert_called_once()
+        self.get.return_value.json.assert_called_once()
+
 
     
 
