@@ -66,6 +66,7 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(GithubOrgClient.has_license(
             repo, license_key), expected)
 
+
 @parameterized_class([
     {"org_payload": {"payload": True}, "repos_payload": {"payload": True},
      "expected_repos": ["repo1", "repo2", "repo3", "repo4"],
@@ -96,7 +97,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(test_class.public_repos(), [])
         self.get_patcher.stop()
         self.get_patcher.start()
-    
+
     def test_public_repos_with_license(self):
         """test_public_repos_with_license"""
         test_class = GithubOrgClient("twitter")
