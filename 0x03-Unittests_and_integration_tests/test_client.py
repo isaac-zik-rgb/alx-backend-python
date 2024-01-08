@@ -2,6 +2,7 @@
 """A github org client
 """
 import unittest
+from unittest.mock import patch, Mock
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
@@ -15,6 +16,9 @@ from utils import (
     access_nested_map,
     memoize,
 )
+import client
+import requests
+from urllib.error import HTTPError
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -63,18 +67,43 @@ class TestGithubOrgClient(unittest.TestCase):
             repo, license_key), expected)
         
     
-    @patch('client.get_json')
-    def test_public_repos_with_license(self, mock_get_json):
-        """test_public_repos_with_license"""
-        repo = {'name': 'twitter', 'license': {'key': 'my_license'}}
-        mock_get_json.return_value = [repo]
-        with patch('client.GithubOrgClient._public_repos_url',
-                   new_callable=PropertyMock) as mock_public_repos_url:
-            mock_public_repos_url.return_value = "twitter"
-            test_class = GithubOrgClient("twitter")
-            self.assertEqual(test_class.public_repos('my_license'), ["twitter"])
-            mock_public_repos_url.assert_called_once()
-            mock_get_json.assert_called_once()
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """TestIntegrationGithubOrgClient class
+    """
+    @classmethod
+    def setUpClass(cls):
+        """setUpClass method
+        """
+        cls.get_patcher = patch('requests.get')
+        cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """tearDownClass method
+        """
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """test_public_repos method
+        """
+        test_class = GithubOrgClient("twitter")
+        self.assertEqual(test_class.public_repos(), [])
+        self.get_patcher.stop()
+
+    def test_public_repos_with_license(self):
+        """test_public_repos_with_license method
+        """
+        test_class = GithubOrgClient("twitter")
+        self.assertEqual(test_class.public_repos("apache-2.0"), [])
+        self.get_patcher.stop()
+
+    def test_public_repos_with_license_no_data(self):
+        """test_public_repos_with_license_no_data method
+        """
+        test_class = GithubOrgClient("twitter")
+        self.assertEqual(test_class.public_repos("bsd"), [])
+        self.get_patcher.stop()
+
 
     
 
