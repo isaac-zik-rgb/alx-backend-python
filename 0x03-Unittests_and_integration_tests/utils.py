@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Generic utilities for github org client.
 """
-import requests
 from functools import wraps
 from typing import (
     Mapping,
@@ -10,6 +9,7 @@ from typing import (
     Dict,
     Callable,
 )
+from security import safe_requests
 
 __all__ = [
     "access_nested_map",
@@ -43,7 +43,7 @@ def access_nested_map(nested_map: Mapping, path: Sequence) -> Any:
 def get_json(url: str) -> Dict:
     """Get JSON from remote URL.
     """
-    response = requests.get(url)
+    response = safe_requests.get(url)
     return response.json()
 
 
